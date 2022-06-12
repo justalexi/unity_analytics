@@ -1,5 +1,7 @@
 ## Small service to send analytics events from unity
 
+Unity version used: 2020.3.28f1
+
 Requires:
 1. TextMesh Pro
 2. Best HTTP/2 asset (https://assetstore.unity.com/packages/tools/network/best-http-2-155981)
