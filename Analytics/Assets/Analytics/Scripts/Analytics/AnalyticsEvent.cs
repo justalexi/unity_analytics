@@ -16,7 +16,7 @@ namespace Analytics.Scripts.Analytics
 
         public static AnalyticsEvent GetAnalyticsEvent(long timestamp, string type, string data)
         {
-            var analyticsEvent = _availableAnalyticsEvents.Count > 0 ? _availableAnalyticsEvents.Dequeue() : new AnalyticsEvent();
+            var analyticsEvent = GetNextAnalyticsEvent();
 
             analyticsEvent.timestamp = timestamp;
             analyticsEvent.type = type;
@@ -27,7 +27,7 @@ namespace Analytics.Scripts.Analytics
 
         public static AnalyticsEvent Deserialize(string analyticsEventStr)
         {
-            var analyticsEvent = _availableAnalyticsEvents.Count > 0 ? _availableAnalyticsEvents.Dequeue() : new AnalyticsEvent();
+            var analyticsEvent = GetNextAnalyticsEvent();
 
             JsonUtility.FromJsonOverwrite(analyticsEventStr, analyticsEvent);
 
@@ -42,6 +42,11 @@ namespace Analytics.Scripts.Analytics
         public static void DisposeAnalyticsEvent(AnalyticsEvent analyticsEvent)
         {
             _availableAnalyticsEvents.Enqueue(analyticsEvent);
+        }
+
+        private static AnalyticsEvent GetNextAnalyticsEvent()
+        {
+            return _availableAnalyticsEvents.Count > 0 ? _availableAnalyticsEvents.Dequeue() : new AnalyticsEvent();
         }
 
         [NonSerialized]

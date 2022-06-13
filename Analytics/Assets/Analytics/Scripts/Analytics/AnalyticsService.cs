@@ -41,6 +41,7 @@ namespace Analytics.Scripts.Analytics
         #region MEC
 
         private CoroutineHandle _sendCoroutine;
+
         // jTODO can be removed if MEC PRO is available
         private bool _isSendCoroutineRunning;
 
@@ -141,47 +142,13 @@ namespace Analytics.Scripts.Analytics
 
             // jTODO maybe resend, if failed
 
-            switch (req.State)
+            if (req.State == HTTPRequestStates.Finished && resp.StatusCode == 200)
             {
-                // The request finished without any problem.
-                case HTTPRequestStates.Finished:
-                    if (resp.IsSuccess)
-                    {
-                        OnResponse?.Invoke(resp.DataAsText);
+                OnResponse?.Invoke(resp.DataAsText);
 
-                        _localStorage.ClearAnalyticsEvents(0, _lastSendingTimestamp);
+                _localStorage.ClearAnalyticsEvents(0, _lastSendingTimestamp);
 
-                        CheckForFreshEvents();
-                    }
-                    else
-                    {
-                        Debug.LogWarning(string.Format("Request finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                            resp.StatusCode,
-                            resp.Message,
-                            resp.DataAsText));
-                    }
-
-                    break;
-
-                // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
-                    Debug.LogError("Request Finished with Error! " + (req.Exception != null ? (req.Exception.Message + "\n" + req.Exception.StackTrace) : "No Exception"));
-                    break;
-
-                // The request aborted, initiated by the user.
-                case HTTPRequestStates.Aborted:
-                    Debug.LogWarning("Request Aborted!");
-                    break;
-
-                // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
-                    Debug.LogError("Connection Timed Out!");
-                    break;
-
-                // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
-                    Debug.LogError("Processing the request Timed Out!");
-                    break;
+                CheckForFreshEvents();
             }
         }
 
