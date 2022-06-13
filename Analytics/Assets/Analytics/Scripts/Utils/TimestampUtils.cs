@@ -5,6 +5,11 @@ namespace Analytics.Scripts.Utils
 {
     public static class TimestampUtils
     {
+        /// <summary>
+        /// Human-readable, sortable way of timestamping (events, files, etc.)
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
         public static long GetTimestamp(DateTime dateTime)
         {
             long result = 0;
